@@ -1,6 +1,26 @@
+
 import telebot
 import requests
 import os
+import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+# --- JUGAAD: Ek chota sa nakli web server taaki Render isko website samjhe aur band na kare ---
+class DummyServer(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Mera Bot Zinda Hai!")
+
+def start_server():
+    # Render jo port dega usko use karenge
+    port = int(os.environ.get("PORT", 8080))
+    server = HTTPServer(('0.0.0.0', port), DummyServer)
+    server.serve_forever()
+
+# Server ko background mein chalu kar diya
+threading.Thread(target=start_server, daemon=True).start()
+# -----------------------------------------------------------------------------------------
 
 # Render ke environment variables se keys uthaenge
 TELEGRAM_TOKEN = os.environ.get("TELEGRAM_TOKEN")
